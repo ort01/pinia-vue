@@ -2,17 +2,26 @@
     <div class="task">
         <h3>{{ task.title }}</h3>
         <div class="task__icons">
-            <i class="material-icons">delete</i>
-            <i class="material-icons">favorite</i>
+            <i class="material-icons" @click="taskStore.deleteTask(task.id)">
+                delete
+            </i>
+            <i class="material-icons" :class="{ active: task.isFav }" @click="taskStore.toggleFav(task.id)">
+                favorite
+            </i>
         </div>
     </div>
 </template>
 
 <script setup>
+import useTaskStore from '../stores/TaskStore';
 
+//props
 defineProps({
     task: Object
 })
+
+//pinia
+const taskStore = useTaskStore()
 
 </script>
 
@@ -41,6 +50,15 @@ defineProps({
         margin-left: 6px;
         cursor: pointer;
         color: #bbb;
+        transition: all .3s;
+
+        &:hover {
+            transform: translateY(-2px);
+        }
+
+        &.active {
+            color: #ff005d;
+        }
     }
 }
 </style>
