@@ -5,10 +5,8 @@ import { defineStore } from "pinia";
 
 const useTaskStore = defineStore('taskStore', {
     state: () => ({
-        tasks: [
-            { id: 1, title: "Buy some milk", isFav: false },
-            { id: 2, title: "Play Gloomhaven", isFav: true }
-        ]
+        tasks: [],
+        isLoading: false
     }),
     getters: {
         //works kinda like a computed property; its a function that return a value
@@ -25,6 +23,16 @@ const useTaskStore = defineStore('taskStore', {
         }
     },
     actions: {
+        async getTasks() {
+            this.isLoading = true
+
+            const res = await fetch('http://localhost:3000/tasks')
+            const data = await res.json()
+
+            this.tasks = data
+            this.isLoading = false
+        },
+
         addTask(task) {
             this.tasks.push(task)
         },

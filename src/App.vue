@@ -11,6 +11,7 @@
       <button @click="filter = 'all'">All Tasks</button>
       <button @click="filter = 'favs'">Fav Tasks</button>
     </nav>
+    <div class="loading" v-if="taskStore.isLoading">Loading data...</div>
     <div class="task-list" v-if="filter === 'all'">
       <div v-for="task in taskStore.tasks">
         <TaskDetails :task="task" />
@@ -37,6 +38,9 @@ const taskStore = useTaskStore()
 
 //refs
 const filter = ref("all")
+
+//fetch tasks with action; getting data from server
+taskStore.getTasks()
 
 </script>
 
@@ -96,5 +100,16 @@ header {
     cursor: pointer;
     font-size: .8em;
   }
+}
+
+.loading {
+  max-width: 640px;
+  border: 1px solid #ffd859;
+  background: #ffe9a0;
+  color: #3a3a3a;
+  padding: 5px 0;
+  text-align: center;
+  margin: 30px auto;
+  transition: all .3s;
 }
 </style>

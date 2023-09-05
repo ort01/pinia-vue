@@ -57,7 +57,7 @@ const taskStore = useTaskStore()
         }
 
         &.active {
-            color: #ff005d;
+            color: #51be4d;
         }
     }
 }
