@@ -8,21 +8,27 @@
       <TaskForm />
     </div>
     <nav class="filter">
-      <button @click="filter = 'all'">All Tasks</button>
-      <button @click="filter = 'favs'">Fav Tasks</button>
+      <div>
+        <button @click="taskStore.$reset">Reset</button>
+      </div>
+      <div>
+        <button @click="filter = 'all'">All Tasks</button>
+        <button @click="filter = 'favs'">Fav Tasks</button>
+      </div>
+
     </nav>
-    <div class="loading" v-if="taskStore.isLoading">Loading data...</div>
+    <div class="loading" v-if="isLoading">Loading data...</div>
     <div class="task-list" v-if="filter === 'all'">
-      <div v-for="task in taskStore.tasks">
+      <div v-for="task in tasks">
         <TaskDetails :task="task" />
       </div>
-      <p>You have {{ taskStore.totalCount }} tasks left to do</p>
+      <p>You have {{ totalCount }} tasks left to do</p>
     </div>
     <div class="task-list" v-if="filter === 'favs'">
-      <div v-for="task in taskStore.favs">
+      <div v-for="task in favs">
         <TaskDetails :task="task" />
       </div>
-      <p>You have {{ taskStore.favCount }} favs left to do</p>
+      <p>You have {{ favCount }} favs left to do</p>
     </div>
   </main>
 </template>
@@ -32,9 +38,13 @@ import useTaskStore from "./stores/TaskStore"
 import TaskForm from "./components/TaskForm.vue";
 import TaskDetails from "./components/taskDetails.vue"
 import { ref } from "vue";
+import { storeToRefs } from "pinia";
 
 //pinia store
 const taskStore = useTaskStore()
+
+//storeToRefs; how to use states and getters from the pinia store as REFS; actions can NOT be used like this
+const { tasks, isLoading, favs, totalCount, favCount } = storeToRefs(taskStore)
 
 //refs
 const filter = ref("all")
@@ -87,11 +97,12 @@ header {
 .filter {
   width: 640px;
   margin: 20px auto 10px;
-  text-align: right;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 
   & button {
     display: inline-block;
-    margin-left: 10px;
     background: #bbb;
     border: 1px solid #ffd859;
     color: #ffd859;
@@ -99,6 +110,10 @@ header {
     padding: 4px 8px;
     cursor: pointer;
     font-size: .8em;
+
+    &:not(:first-child) {
+      margin-left: 10px;
+    }
   }
 }
 
