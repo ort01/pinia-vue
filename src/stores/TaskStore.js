@@ -6,7 +6,8 @@ import { defineStore } from "pinia";
 const useTaskStore = defineStore('taskStore', {
     state: () => ({
         tasks: [],
-        isLoading: false
+        isLoading: false,
+        error: null
     }),
     getters: {
         //works kinda like a computed property; its a function that return a value
@@ -26,51 +27,83 @@ const useTaskStore = defineStore('taskStore', {
         async getTasks() {
             this.isLoading = true
 
-            const res = await fetch('http://localhost:3000/tasks')
-            const data = await res.json()
+            try {
+                const res = await fetch('http://localhost:3000/tasks')
+                const data = await res.json()
 
-            this.tasks = data
+                if (!res.ok) {
+                    throw new Error("Ooops, something went wrong :(")
+                } else {
+                    this.tasks = data
+                    this.error = null
+                }
+
+            } catch (err) {
+                this.error = err.message
+            }
+
             this.isLoading = false
         },
 
         async addTask(task) {
-            this.tasks.push(task)
 
-            const res = await fetch('http://localhost:3000/tasks', {
-                method: 'POST',
-                body: JSON.stringify(task),
-                headers: { 'Content-Type': 'application/json' }
-            })
-
-            if (res.error) {
-                console.log(res.error);
+            try {
+                const res = await fetch('http://localhost:3000/tasks', {
+                    method: 'POST',
+                    body: JSON.stringify(task),
+                    headers: { 'Content-Type': 'application/json' }
+                })
+                if (!res.ok) {
+                    throw new Error("Ooops, something went wrong :(")
+                } else {
+                    this.tasks.push(task)
+                    this.error = null
+                }
+            } catch (err) {
+                this.error = err.message
             }
         },
+
         async deleteTask(id) {
-            this.tasks = this.tasks.filter((t) => {
-                return t.id !== id
-            })
 
-            const res = await fetch(`http://localhost:3000/tasks/${id}`, {
-                method: 'DELETE'
-            })
+            try {
+                const res = await fetch(`http://localhost:3000/tasks/${id}`, {
+                    method: 'DELETE'
+                })
 
-            if (res.error) {
-                console.log(res.error);
+                if (!res.ok) {
+                    throw new Error("Ooops, something went wrong :(")
+                } else {
+                    this.tasks = this.tasks.filter((t) => {
+                        return t.id !== id
+                    })
+                    this.error = null
+                }
+
+            } catch (err) {
+                this.error = err.message
             }
         },
+
         async toggleFav(id) {
             const task = this.tasks.find((t) => t.id == id)
             task.isFav = !task.isFav
 
-            const res = await fetch(`http://localhost:3000/tasks/${id}`, {
-                method: 'PATCH',
-                body: JSON.stringify({ isFav: task.isFav }),
-                headers: { 'Content-Type': 'application/json' }
-            })
+            try {
+                const res = await fetch(`http://localhost:3000/tasks/${id}`, {
+                    method: 'PATCH',
+                    body: JSON.stringify({ isFav: task.isFav }),
+                    headers: { 'Content-Type': 'application/json' }
+                })
 
-            if (res.error) {
-                console.log(res.error);
+                if (!res.ok) {
+                    throw new Error("Ooops, something went wrong :(")
+                } else {
+                    this.error = null
+                }
+
+            } catch (err) {
+                this.error = err.message
             }
         }
     }

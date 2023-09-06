@@ -18,6 +18,7 @@
 
     </nav>
     <div class="loading" v-if="isLoading">Loading data...</div>
+    <div class="error" v-if="error">{{ error }}</div>
     <div class="task-list" v-if="filter === 'all'">
       <div v-for="task in tasks">
         <TaskDetails :task="task" />
@@ -44,7 +45,7 @@ import { storeToRefs } from "pinia";
 const taskStore = useTaskStore()
 
 //storeToRefs; how to use states and getters from the pinia store as REFS; actions can NOT be used like this
-const { tasks, isLoading, favs, totalCount, favCount } = storeToRefs(taskStore)
+const { tasks, isLoading, error, favs, totalCount, favCount } = storeToRefs(taskStore)
 
 //refs
 const filter = ref("all")
@@ -115,16 +116,5 @@ header {
       margin-left: 10px;
     }
   }
-}
-
-.loading {
-  max-width: 640px;
-  border: 1px solid #ffd859;
-  background: #ffe9a0;
-  color: #3a3a3a;
-  padding: 5px 0;
-  text-align: center;
-  margin: 30px auto;
-  transition: all .3s;
 }
 </style>
